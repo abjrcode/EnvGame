@@ -1,0 +1,75 @@
+name: Review Deployments
+
+on:
+  pull_request:
+    paths: 'foundation/**'
+
+jobs:
+  previewFrankfurt:
+    name: Preview Frankfurt
+    runs-on: ubuntu-latest
+    environment: frankfurt
+    concurrency:
+      group: EnvGame-frankfurt-ci-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v2
+      
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+          
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+      
+      - run: npm install
+        working-directory: foundation
+
+      - uses: pulumi/actions@v3
+        with:
+          command: preview
+          work-dir: foundation
+          comment-on-pr: true
+          edit-pr-comment: true
+          stack-name: frankfurt
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_TOKEN }}
+  
+  previewIreland:
+    name: Preview Ireland
+    runs-on: ubuntu-latest
+    environment: ireland
+    concurrency:
+      group: EnvGame-ireland-ci-${{ github.ref }}
+      cancel-in-progress: true
+    needs: previewFrankfurt
+    steps:
+      - uses: actions/checkout@v2
+      
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+          
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+      
+      - run: npm install
+        working-directory: foundation
+
+      - uses: pulumi/actions@v3
+        with:
+          command: preview
+          work-dir: foundation
+          comment-on-pr: true
+          edit-pr-comment: true
+          stack-name: ireland
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_TOKEN }}
