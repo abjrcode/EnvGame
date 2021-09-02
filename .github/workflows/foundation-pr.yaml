@@ -1,16 +1,16 @@
-name: Review Deployments
+name: Review Foundation Deployments
 
 on:
   pull_request:
     paths: 'foundation/**'
 
 jobs:
-  previewFrankfurt:
-    name: Preview Frankfurt
+  previewFoundationFrankfurt:
+    name: Preview Foundation Frankfurt
     runs-on: ubuntu-latest
     environment: frankfurt
     concurrency:
-      group: EnvGame-frankfurt-ci-${{ github.ref }}
+      group: EnvGame-foundation-frankfurt-ci-${{ github.ref }}
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@v2
@@ -39,14 +39,14 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_TOKEN }}
   
-  previewIreland:
-    name: Preview Ireland
+  previewFoundationIreland:
+    name: Preview Foundation Ireland
     runs-on: ubuntu-latest
     environment: ireland
     concurrency:
-      group: EnvGame-ireland-ci-${{ github.ref }}
+      group: EnvGame-foundation-ireland-ci-${{ github.ref }}
       cancel-in-progress: true
-    needs: previewFrankfurt
+    needs: previewFoundationFrankfurt
     steps:
       - uses: actions/checkout@v2
       

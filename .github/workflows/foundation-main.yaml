@@ -1,16 +1,16 @@
-name: Trigger Deployment
+name: Deploy Foundation
 
 on:
   push:
     paths: 'foundation/**'
 
 jobs:
-  deployFrankfurt:
-    name: Deploy Frankfurt
+  deployFoundationFrankfurt:
+    name: Deploy Foundation Frankfurt
     runs-on: ubuntu-latest
     environment: frankfurt
     concurrency:
-      group: EnvGame-frankfurt
+      group: EnvGame-foundation-frankfurt
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v2
@@ -38,14 +38,14 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_TOKEN }}
   
-  deployIreland:
-    name: Deploy Ireland
+  deployFoundationIreland:
+    name: Deploy Foundation Ireland
     runs-on: ubuntu-latest
     environment: ireland
     concurrency:
-      group: EnvGame-ireland
+      group: EnvGame-foundation-ireland
       cancel-in-progress: false
-    needs: deployFrankfurt
+    needs: deployFoundationFrankfurt
     steps:
       - uses: actions/checkout@v2
       
