@@ -1,9 +1,13 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
-import * as awsx from "@pulumi/awsx";
 
 // Create an AWS resource (S3 Bucket)
-const bucket = new aws.s3.Bucket("my-bucket");
 
-// Export the name of the bucket
-export const bucketName = bucket.id;
+const currentStack = pulumi.getStack()
+
+const foundationStack = new pulumi.StackReference(`abjrcode/foundation/${currentStack}`)
+
+new aws.s3.BucketObject('the-one-and-only', {
+    bucket: foundationStack.requireOutput('bucketName'),
+    content: 'cannot believe it'
+})
